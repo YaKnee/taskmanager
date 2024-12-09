@@ -11,7 +11,8 @@ dotenv.config();
 await connectToDatabase();
 
 const tasks = [
-    { name: "Ex6 backend", dueDate: new Date("2024-12-19"), priority: "Medium" },
+    { name: "Ex6 backend project", dueDate: new Date("2024-12-19"), completed: true },
+    { name: "Ex6 diary", dueDate: new Date("2024-12-19"), priority: "Medium"},
     { name: "PowerPoint for embedded", dueDate: new Date("2024-12-13"), priority: "High" },
     { name: "Voice activated auto-move physical chess board" }
 ];
@@ -29,6 +30,9 @@ const resetDatabase = async () => {
 
             // Create a new task with the auto-generated ID
             const newTask = new Task({ ...task, id: newId });
+            if (newTask.completed) {
+                newTask.priority = "None";
+            }
             await newTask.save(); // Save it to the database
             console.log(`Added task: ${task.name}`);
         }

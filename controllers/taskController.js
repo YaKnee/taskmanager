@@ -65,10 +65,10 @@ export const getAllTasks = async (req, res) => { // Note: swapped `res` and `req
       });
     }
 
-    res.status(200).send(tasks);
+    return res.status(200).send(tasks);
   } catch (err) {
     console.error(err); // Log error for debugging
-    res.status(500).send({ error: "Error retrieving tasks." });
+    return res.status(500).send({ error: "Error retrieving tasks." });
   }
 };
 
@@ -80,10 +80,10 @@ export const getTasksById = async (req, res) => {
     if (!task) {
       return res.status(404).send({ error: "Task not found." });
     }
-    res.status(200).send(task);
+    return res.status(200).send(task);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ error: "Error retrieving task." });
+    return res.status(500).send({ error: "Error retrieving task." });
   }
 };
 
@@ -92,22 +92,33 @@ export const postNewTask = async (req, res) => { // Already validated
   try {
     const lastTask = await Task.findOne().sort({ id: -1}).limit(1);
     const newId = lastTask ? lastTask.id + 1 : 1;
-    const newTask = new Task({ ...req.body, id: newId });
+    const taskData = { ...req.body, id: newId };
+
+    const newTask = new Task(taskData);
+    
+    // Ensure priority is "None" if completed is true
+    // Nobody should add a new task to task manager if its already completed but ya never know
+    if (newTask.completed !== true) {
+      newTask.priority = "None";
+    }
+
     await newTask.save();
-    res.status(201).send({ 
+    return res.status(201).send({
       message: "Task Added Successfully.",
       new_task: newTask
-     });
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).send({ error: "Error adding new task." });
+    return res.status(500).send({ error: "Error adding new task." });
   }
 }
+
 
 // Function to update a task by ID
 export const updateTask = async (req, res) => { // Already validated
   try {
     const updatedTaskInfo = req.body;
+
     const newTaskInfo = await Task.findOneAndUpdate(
       { id: req.params.id },
       updatedTaskInfo,
@@ -117,13 +128,26 @@ export const updateTask = async (req, res) => { // Already validated
     if(!newTaskInfo) {
       return res.status(404).send({ error: "Update cancelled as task ID not found." });
     }
-    res.status(200).send({
+
+    // Ensure priority is "None" if completed is true
+    if (newTaskInfo.completed && newTaskInfo.priority !== "None") {
+      newTaskInfo.priority = "None";
+
+      await newTaskInfo.save();
+
+      return res.status(200).send({
+        warning: "Priority must be 'None' if task is completed.",
+        new_details: newTaskInfo,
+      });
+    }
+
+    return res.status(200).send({
       message: "Task updated successfully.",
       new_details: newTaskInfo,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send({ error: "Error updating task." });
+    return res.status(500).send({ error: "Error updating task." });
   }
 };
 
@@ -133,9 +157,9 @@ export const deleteTask = async (req, res) => {
     if(!deletedTask) {
       return res.status(404).send({ error: "Deletion cancelled as task ID not found." });
     }
-    res.status(204).send();
+    return res.status(204).send();
   } catch (err) {
     console.error(err);
-    res.status(500).send({ error: "Error deleting task." });
+    return res.status(500).send({ error: "Error deleting task." });
   }
 }
