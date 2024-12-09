@@ -132,7 +132,7 @@ export const deleteTask = async (req, res) => {
     if(!deletedTask) {
       return res.status(404).send({ error: "Deletion cancelled as task ID not found." });
     }
-    res.status(204).send({ message: "Task deleted successfully." });
+    res.status(204).send();
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: "Error deleting task." });
