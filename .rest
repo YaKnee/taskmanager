@@ -8,3 +8,24 @@ GET http://localhost:{{PORT}}/tasks/1
 
 ### Attempt to get movie by invalid ID -> 404
 GET http://localhost:{{PORT}}/tasks/40000
+
+### Add new task -> 201
+POST http://localhost:{{PORT}}/tasks
+Content-Type: application/json
+
+{
+    "name": "Renew rock-climing membership",
+    "dueDate": "2024-12-31",
+    "priority": "High"
+}
+
+### Update existing task -> 200
+PUT http://localhost:{{PORT}}/tasks/4
+Content-Type: application/json
+
+{
+    "dueDate": "2024-12-31"
+}
+
+### Delete task -> 204
+DELETE http://localhost:6969/tasks/4
