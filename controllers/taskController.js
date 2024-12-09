@@ -88,7 +88,7 @@ export const getTasksById = async (req, res) => {
 };
 
 // Function to post a new task to databse
-export const postNewTask = async (req, res) => {
+export const postNewTask = async (req, res) => { // Already validated
   try {
     const lastTask = await Task.findOne().sort({ id: -1}).limit(1);
     const newId = lastTask ? lastTask.id + 1 : 1;
@@ -104,7 +104,8 @@ export const postNewTask = async (req, res) => {
   }
 }
 
-export const updateTask = async (req, res) => {
+// Function to update a task by ID
+export const updateTask = async (req, res) => { // Already validated
   try {
     const updatedTaskInfo = req.body;
     const newTaskInfo = await Task.findOneAndUpdate(
