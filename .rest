@@ -1,0 +1,4 @@
+@PORT = 6969
+
+### Get all tasks -> 200
+GET http://localhost:{{PORT}}/tasks

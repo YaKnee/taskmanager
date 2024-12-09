@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 
 import { connectToDatabase } from "./config/db.js";
+import { taskRouter } from "./routes/tasks.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -12,7 +13,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 app.get("/", (req, res) => res.send("Welcome to the Task Management Database."));
-//app.use("/tasks", taskRouter);
+app.use("/tasks", taskRouter);
 //app.use("/auth", authRouter);
 
 // Catch-all route to handle undefined routes and return 404
