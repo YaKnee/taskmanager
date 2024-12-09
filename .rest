@@ -1,10 +1,13 @@
 @PORT = 6969
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NTcxMGZlM2Q5MzJhNWVhYjhjMzM0ZiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczMzc1OTQxOSwiZXhwIjoxNzMzNzYzMDE5fQ.mtRjW5vUDIafzcT1d7OxMPM1_2-BeRiLmNZb4kMsA3Q
 
 ### Get all tasks -> 200
 GET http://localhost:{{PORT}}/tasks
+Authorization: Bearer {{token}}
 
 ### Get task by ID -> 200
 GET http://localhost:{{PORT}}/tasks/1
+Authorization: Bearer {{token}}
 
 ### Attempt to get movie by invalid ID -> 404
 GET http://localhost:{{PORT}}/tasks/40000
@@ -12,6 +15,7 @@ GET http://localhost:{{PORT}}/tasks/40000
 ### Add new task -> 201
 POST http://localhost:{{PORT}}/tasks
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
     "name": "Renew rock-climing membership",
@@ -28,4 +32,43 @@ Content-Type: application/json
 }
 
 ### Delete task -> 204
-DELETE http://localhost:6969/tasks/4
+DELETE http://localhost:6969/tasks/5
+
+
+### Register Test - Admin
+POST http://localhost:{{PORT}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123",
+  "role": "admin"
+}
+
+### Register Test - Regular
+POST http://localhost:{{PORT}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "user1234"
+}
+
+### Login Test - Valid Credentials [admin]
+POST http://localhost:{{PORT}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+### Login Test - Valid Credentials [regular]
+
+POST http://localhost:{{PORT}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "user1234"
+}
