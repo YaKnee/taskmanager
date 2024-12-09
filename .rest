@@ -2,3 +2,9 @@
 
 ### Get all tasks -> 200
 GET http://localhost:{{PORT}}/tasks
+
+### Get task by ID -> 200
+GET http://localhost:{{PORT}}/tasks/1
+
+### Attempt to get movie by invalid ID -> 404
+GET http://localhost:{{PORT}}/tasks/40000
