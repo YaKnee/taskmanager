@@ -86,3 +86,55 @@ export const getTasksById = async (req, res) => {
     res.status(500).send({ error: "Error retrieving task." });
   }
 };
+
+// Function to post a new task to databse
+export const postNewTask = async (req, res) => {
+  try {
+    const lastTask = await Task.findOne().sort({ id: -1}).limit(1);
+    const newId = lastTask ? lastTask.id + 1 : 1;
+    const newTask = new Task({ ...req.body, id: newId });
+    await newTask.save();
+    res.status(201).send({ 
+      message: "Task Added Successfully.",
+      new_task: newTask
+     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: "Error adding new task." });
+  }
+}
+
+export const updateTask = async (req, res) => {
+  try {
+    const updatedTaskInfo = req.body;
+    const newTaskInfo = await Task.findOneAndUpdate(
+      { id: req.params.id },
+      updatedTaskInfo,
+      { new: true },
+    );
+
+    if(!newTaskInfo) {
+      return res.status(404).send({ error: "Update cancelled as task ID not found." });
+    }
+    res.status(200).send({
+      message: "Task updated successfully.",
+      new_details: newTaskInfo,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: "Error updating task." });
+  }
+};
+
+export const deleteTask = async (req, res) => {
+  try {
+    const deletedTask = await Task.findOneAndDelete({ id: req.params.id });
+    if(!deletedTask) {
+      return res.status(404).send({ error: "Deletion cancelled as task ID not found." });
+    }
+    res.status(204).send({ message: "Task deleted successfully." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: "Error deleting task." });
+  }
+}
