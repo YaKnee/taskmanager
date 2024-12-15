@@ -3,25 +3,25 @@
 This is a backend API for managing tasks. It allows users to create, read, update, and delete tasks, each with attributes like name, due date, priority, and completion status. The API is built with Express and MongoDB, providing a simple way to organize tasks, set deadlines, and track progress. The application supports CRUD operations and includes validation and authentication features to ensure data integrity and security.
 
 ## Installation
-*requires Node.js and your own MongoDB server and credentials. Instructions can be found here on how to setup your own: [Getting Started with MongoDB Atlas](https://www.youtube.com/watch?v=bBA9rUdqmgY).
+_Requires Node.js and your own MongoDB server and credentials. Instructions can be found here on how to setup your own: [Getting Started with MongoDB Atlas](https://www.youtube.com/watch?v=bBA9rUdqmgY)._
 
-Go to the directory where you want to store this repository, then use: `git clone https://github.com/YaKnee/taskmanager.git` in CLI (or download the ZIP folder and unzip).
-Next, open this project up with your favourite IDE and install the dependency packages by using `npm install` in the terminal. 
+Go to the directory where you want to store this repository, then:
+1. Clone the repository or download and unzip the ZIP: `git clone https://github.com/YaKnee/taskmanager.git`
+2. Open the project with your favourite IDE and install dependencies: `npm install`
+3. Create a __.env__ file in the project folder with the following:
+    - MongoDB server credentials: `MONGODB_URI = mongodb+srv://<username>:<password>@<cluster_name>.mongodb.net/<database_name>`
+    - JSON Web Token secret (should be a strong, randomly generated key): `JWT_SECRET=<secret_key>`
+    - Port number (optional): `PORT = 3000`
 
-Then create a __.env__ file to the project folder with:
-- Server credentials, for example: `MONGODB_URI = mongodb+srv://<username>:<password>@<cluster_name>.mongodb.net/<database_name>`,
-- Json web token secret, for example: `JWT_SECRET=<secret_key>`,
-- Port number, for example: `PORT=2000` (_not strictly necessary as code will use 3000 as default if not added, but good for customizability_)*
+__Replace values between _<>_ with your actual values.__
 
-__Replace values between <> with your actual values.__
-
-Use `node scripts/resetDB.js` in terminal to reset and populate the database. Make sure to update tasks' dueDates to be greater than current date.
-
-Finally, use `npm start` which should start the project with nodemon for automatic updates and morgan for logging during development.
+4. Reset/Populate the database with default tasks: `node scripts/resetDB.js`
+5. Start the project: `npm start`. This will use _nodemon_ for automatic updates and _morgan_ for logging during development.
 
 ## Docs
 
-Each task, when added, must be formatted as a JSON object with the following format:
+### Structure 
+Each task must be structured as a JSON object in the following format:
 ``` 
 {
     "name": "some name",
@@ -30,12 +30,24 @@ Each task, when added, must be formatted as a JSON object with the following for
     "priority": "Medium"
 }
 ```
-- The *only required property* for POST/PUT requests is the *"__name__"* property.
-- The possible values of "__priority__" are "None", "Low", "Medium", and "High".
-- "__completed__" and "__priority__" default to false and "Low" respectively if no values are given.
-- When POSTing a task with a "__dueDate__", it is only possible if that "__dueDate__" is greater than the current date.
-- If a task's "__completed__" property has been switched to true, then the "__priority__" will always be "None".
+An "__id__" property will be automatically generated an appended to the object.
 
+### Rules for Task Properties
+1. __Required Property__:
+    - The only required property in `POST`/`PUT` requests is the "__name__" property.
+2. __Default Values__:
+    - "__completed__": Defaults to __false__ if not specified.
+    - "__priority__": Defaults to "__Low__" if not specified.
+3. __Allowed Values:
+    - "__priority__" must be one of the following:
+        - "__None__",
+        - "__Low__",
+        - "__Medium__",
+        - "__High__"
+4. __Due Date Constraints__:
+    - When submitting a task with a "__dueDate__", it must be a date __greater than the current date__. Tasks with past dates will not be accepted.
+5. __Priority Rules__:
+    - If a task's "__completed__" property is set to __true__, its "__priority__" will automatically be changed to "__None__".
 
 ## Libraries
 
