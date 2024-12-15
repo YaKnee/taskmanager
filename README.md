@@ -13,7 +13,7 @@ Go to the directory where you want to store this repository, then:
     - JSON Web Token secret (should be a strong, randomly generated key): `JWT_SECRET=<secret_key>`
     - Port number (optional): `PORT = 3000`
 
-__Replace values between _<>_ with your actual values.__
+    _Replace values between __<>__ with your actual values._
 
 4. Reset/Populate the database with default tasks: `node scripts/resetDB.js`
 5. Start the project: `npm start`. This will use _nodemon_ for automatic updates and _morgan_ for logging during development.
@@ -30,7 +30,7 @@ Each task must be structured as a JSON object in the following format:
     "priority": "Medium"
 }
 ```
-An "__id__" property will be automatically generated an appended to the object.
+An "__id__" property will be automatically generated and appended to the object.
 
 ### Rules for Task Properties
 1. __Required Property__:
@@ -38,7 +38,7 @@ An "__id__" property will be automatically generated an appended to the object.
 2. __Default Values__:
     - "__completed__": Defaults to __false__ if not specified.
     - "__priority__": Defaults to "__Low__" if not specified.
-3. __Allowed Values:
+3. __Allowed Values__:
     - "__priority__" must be one of the following:
         - "__None__",
         - "__Low__",
