@@ -89,10 +89,11 @@ __Login Response Example__:
     "token": "<adminToken>"
 }
 ```
-_See (JWT Introduction)[https://jwt.io/introduction] for how the token is generated._
+_See [JWT Introduction](https://jwt.io/introduction) for how the token is generated._
 
 ### Create a New Task
 To create a task, use a valid admin token in the `Authorization` header.
+
 __Request__:
 ```
 POST http://localhost:3000/tasks
@@ -139,6 +140,7 @@ __Response__:
 ### Update a Task
 
 __Mark Task as Completed__:
+
 When a task is marked as __completed__, its priority is automatically updated to "__None__":
 ```
 PUT http://localhost:3000/tasks/1
