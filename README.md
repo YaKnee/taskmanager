@@ -177,7 +177,7 @@ HTTP/1.1 204 No Content
 ```
 
 
-## Libraries
+# Libraries
 
 Full list of libaries used for this project are:
 - [bcrypt](https://www.npmjs.com/package/bcrypt)
