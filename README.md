@@ -2,7 +2,7 @@
 
 This is a backend API for managing tasks. It allows users to create, read, update, and delete tasks, each with attributes like name, due date, priority, and completion status. The API is built with Express and MongoDB, providing a simple way to organize tasks, set deadlines, and track progress. The application supports CRUD operations and includes validation and authentication features to ensure data integrity and security.
 
-## Installation
+# Installation
 _Requires Node.js and your own MongoDB server and credentials. Instructions can be found here on how to setup your own: [Getting Started with MongoDB Atlas](https://www.youtube.com/watch?v=bBA9rUdqmgY)._
 
 Go to the directory where you want to store this repository, then:
@@ -18,9 +18,11 @@ Go to the directory where you want to store this repository, then:
 4. Reset/Populate the database with default tasks: `node scripts/resetDB.js`
 5. Start the project: `npm start`. This will use _nodemon_ for automatic updates and _morgan_ for logging during development.
 
-## Docs
+# Docs
 
-### Structure 
+Only __admin__ users can `POST`, `PUT`, and `DELETE`, while all authenticated users (__regular__ and __admin__) can do `GET` requests. 
+
+## Structure 
 Each task must be structured as a JSON object in the following format:
 ``` 
 {
@@ -32,7 +34,7 @@ Each task must be structured as a JSON object in the following format:
 ```
 An "__id__" property will be automatically generated and appended to the object.
 
-### Rules for Task Properties
+## Rules for Task Properties
 1. __Required Property__:
     - The only required property in `POST`/`PUT` requests is the "__name__" property.
 2. __Default Values__:
@@ -48,6 +50,130 @@ An "__id__" property will be automatically generated and appended to the object.
     - When submitting a task with a "__dueDate__", it must be a date __greater than the current date__. Tasks with past dates will not be accepted.
 5. __Priority Rules__:
     - If a task's "__completed__" property is set to __true__, its "__priority__" will automatically be changed to "__None__".
+
+## Example Requests
+
+Below are sample requests to interact with the backend API. These examples demonstrate how to perform __CRUD operations__ using the `/tasks` endpoint.
+
+### Authentication
+
+Before making any task-related requests, ensure you have a valid token. Use the `/auth/login` endpoint with valid credentials to get a token.
+
+__Register a User__:
+```
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "username": "some_name",
+    "password": "some_password",
+    "role": "admin"
+}
+```
+_**password** must be atleast 8 characters in length. Will be hashed with **bcrypt** before sending to database._
+
+__Login as Admin__:
+```
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "username": "some_name",
+    "password": "some_password"
+}
+```
+
+__Login Response Example__:
+```
+{
+    "token": "<adminToken>"
+}
+```
+_See (JWT Introduction)[https://jwt.io/introduction] for how the token is generated._
+
+### Create a New Task
+To create a task, use a valid admin token in the `Authorization` header.
+__Request__:
+```
+POST http://localhost:3000/tasks
+Content-Type: application/json
+Authorization: Bearer <adminToken>
+
+{
+    "name": "highly important task",
+    "dueDate": "2024-12-31",
+    "priority": "High"
+}
+```
+
+### Read Tasks
+__Get All Tasks__:
+```
+GET http://localhost:3000/tasks
+Authorization: Bearer <token>
+```
+
+__Get Tasks by Priority__:
+```
+GET http://localhost:3000/tasks?priority=high
+Authorization: Bearer <token>
+```
+
+__Get Tasks by ID__:
+```
+GET http://localhost:3000/tasks/1
+Authorization: Bearer <token>
+```
+
+__Response__:
+```
+{
+    "id": 1,
+    "name": "highly important task",
+    "dueDate": "2024-12-31T00:00:00.000Z",
+    "completed": false,
+    "priority": "High"
+}
+```
+
+### Update a Task
+
+__Mark Task as Completed__:
+When a task is marked as __completed__, its priority is automatically updated to "__None__":
+```
+PUT http://localhost:3000/tasks/1
+Content-Type: application/json
+Authorization: Bearer <adminToken>
+
+{
+    "name": "highly important task (done)",
+    "completed": true
+}
+```
+
+__Response__:
+```
+{
+    "id": 1,
+    "name": "highly important task (done)",
+    "dueDate": "2024-12-31T00:00:00.000Z",
+    "completed": true,
+    "priority": "None"
+}
+```
+
+### Delete Task
+__Delete by ID__:
+```
+DELETE http://localhost:3000/tasks/1
+Authorization: Bearer <adminToken>
+```
+
+__Response__:
+```
+HTTP/1.1 204 No Content
+```
+
 
 ## Libraries
 
