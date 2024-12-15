@@ -38,7 +38,10 @@ export const getAllTasks = async (req, res) => { // Note: swapped `res` and `req
         endOfDay.setHours(23, 59, 59, 999);
         filter.dueDate = { $gte: startOfDay, $lte: endOfDay }; // Match entire day
       } else {
-        return res.status(400).send({ error: "Invalid date format for dueDate." });
+        return res.status(400).send({ 
+          error: "Invalid date format for dueDate.",
+          correctFormat: "YYYY-MM-DD"
+        });
       }
     }
 
@@ -49,7 +52,9 @@ export const getAllTasks = async (req, res) => { // Note: swapped `res` and `req
       } else if (req.query.completed.toLowerCase() === "false") {
         filter.completionStatus = false;
       } else {
-        return res.status(400).send({ error: "Invalid value for 'completed'. Use 'true' or 'false'." });
+        return res.status(400).send({ 
+          error: "Invalid value for 'completed'.",
+          validValues: [true, false] });
       }
     }
 
@@ -92,13 +97,12 @@ export const postNewTask = async (req, res) => { // Already validated
   try {
     const lastTask = await Task.findOne().sort({ id: -1}).limit(1);
     const newId = lastTask ? lastTask.id + 1 : 1;
-    const taskData = { ...req.body, id: newId };
 
-    const newTask = new Task(taskData);
+    const newTask = new Task({ ...req.body, id: newId });
     
     // Ensure priority is "None" if completed is true
     // Nobody should add a new task to task manager if its already completed but ya never know
-    if (newTask.completed !== true) {
+    if (newTask.completed && newTask.priority !== "None") {
       newTask.priority = "None";
     }
 
